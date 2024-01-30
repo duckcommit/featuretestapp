@@ -12,13 +12,26 @@ enum Currency {
 class FilterScreen extends StatefulWidget {
   @override
   _FilterScreenState createState() => _FilterScreenState();
+
+  // Static method to show the bottom sheet
+  static Future<void> showBottomSheet(BuildContext context) async {
+    return showModalBottomSheet(
+      useSafeArea: true,
+      isDismissible: true,
+      isScrollControlled: true,
+      showDragHandle: true,
+      context: context,
+      builder: (BuildContext context) {
+        return FilterScreen();
+      },
+    );
+  }
 }
 
 class _FilterScreenState extends State<FilterScreen> {
-
   late DateTime selectedDate;
-  String selectedCurrency = '\$';
-  int selectedChipIndex = 0; // Default currency
+  String selectedCurrency = '\$'; // Default currency
+  int selectedChipIndex = 0;
 
   @override
   void initState() {
@@ -49,7 +62,8 @@ class _FilterScreenState extends State<FilterScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(14.0),
+      height: MediaQuery.of(context).size.height * 0.60,
+      padding: EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -62,81 +76,91 @@ class _FilterScreenState extends State<FilterScreen> {
 
           // As On and Currency
           Row(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    // As On
-    Expanded(
-      child: Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    Text('As On'),
-    Transform.translate(
-      offset: Offset(0, -2.0), // Adjust the Y offset to bring them closer
-      child: GestureDetector(
-        onTap: () => _selectDate(context),
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: Color.fromARGB(255, 129,127,131))),
-          ),
-          child: InputDecorator(
-            decoration: InputDecoration(
-              suffixIcon: Icon(
-                              Icons.event_note,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // As On
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('As On'),
+                    Transform.translate(
+                      offset: Offset(
+                          0, -2.0), // Adjust the Y offset to bring them closer
+                      child: GestureDetector(
+                        onTap: () => _selectDate(context),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(
+                                    color: Color.fromARGB(255, 129, 127, 131))),
+                          ),
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              suffixIcon: Icon(
+                                Icons.event_note,
+                              ),
+                              border: InputBorder.none,
                             ),
-              border: InputBorder.none,
-            ),
-            child: Text(
-              _formattedDate(selectedDate),
-              style: TextStyle(fontSize: 16.0),
-            ),
+                            child: Text(
+                              _formattedDate(selectedDate),
+                              style: TextStyle(fontSize: 16.0),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Spacer to create space between "As On" and "Currency"
+              SizedBox(width: 16.0),
+
+              // Currency
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Currency',
+                  ),
+                  Transform.translate(
+                    offset: Offset(
+                        0, -9.0), // Adjust the Y offset to bring them closer
+                    child: DropdownMenu<Currency>(
+                      inputDecorationTheme: const InputDecorationTheme(
+                        border: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color:
+                                    const Color.fromARGB(255, 162, 157, 165))),
+                        floatingLabelAlignment: FloatingLabelAlignment.start,
+                      ),
+                      initialSelection: Currency.USD,
+                      dropdownMenuEntries: [
+                        for (final currency in Currency.values)
+                          DropdownMenuEntry(
+                              label: currency.symbol, value: currency)
+                      ],
+                      onSelected: (value) {
+                        if (value != null) {
+                          setState(() {
+                            selectedCurrency = value.symbol;
+                          });
+                        }
+                      },
+                      width: 110,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ),
-      ),
-    ),
-  ],
-),
-    ),
 
-    // Spacer to create space between "As On" and "Currency"
-    SizedBox(width: 16.0),
-
-    // Currency
-    Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    Text('Currency',),
-    Transform.translate(
-      offset: Offset(0, -9.0), // Adjust the Y offset to bring them closer
-      child: DropdownMenu<Currency>(
-        inputDecorationTheme: const InputDecorationTheme(
-          border: UnderlineInputBorder(borderSide: BorderSide(color: const Color.fromARGB(255, 162,157,165))),
-          floatingLabelAlignment: FloatingLabelAlignment.start,
-        ),
-        initialSelection: Currency.USD,
-        dropdownMenuEntries: [
-          for (final currency in Currency.values)
-            DropdownMenuEntry(label: currency.symbol, value: currency)
-        ],
-        onSelected: (value) {
-          if (value != null) {
-            setState(() {
-              selectedCurrency = value.symbol;
-            });
-          }
-        },
-        width: 110,
-      ),
-    ),
-  ],
-),
-  ],
-),
-
-          SizedBox(height: 30.0),
+          SizedBox(height: 16.0),
 
           // Third Filter Portfolio
           Text('Portfolio'),
-
+          SizedBox(height: 7.0),
           // Chip List
           Wrap(
             spacing: 8.0,
@@ -153,12 +177,33 @@ class _FilterScreenState extends State<FilterScreen> {
                 ),
             ],
           ),
+          SizedBox(
+            height: 16.0,
+          ),
+          Container(
+            width: double
+                .infinity, // Make the container fill the screen horizontally
+            //padding: EdgeInsets.all(12.0), // Adjust padding as needed // Set your desired background color
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                'APPLY',
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 }
-
 
 class FilterChipWidget extends StatelessWidget {
   final String label;

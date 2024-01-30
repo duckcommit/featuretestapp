@@ -28,7 +28,7 @@ class MyHomePage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.filter_list),
             onPressed: () {
-              showFilterOptions(context);
+              showFilterBottomSheet(context);
             },
           ),
         ],

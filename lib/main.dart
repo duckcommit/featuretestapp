@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'filter_option.dart';
 
 void main() {
   runApp(MyApp());
@@ -8,7 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Filter Button Example',
+      title: 'Filter App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -22,42 +23,19 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Filter Button Example'),
+        title: Text('Filter App'),
         actions: [
-          // Filter Button
           IconButton(
             icon: Icon(Icons.filter_list),
             onPressed: () {
-              // Handle filter button press
-              _showFilterOptions(context);
+              showFilterOptions(context);
             },
           ),
         ],
       ),
       body: Center(
-        child: Text('Your App Content Here'),
+        child: Text('Main Screen Content'),
       ),
-    );
-  }
-
-  // Function to show filter options (customize according to your needs)
-  void _showFilterOptions(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Filter Options'),
-          content: Text('Add your filter options here.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Close'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

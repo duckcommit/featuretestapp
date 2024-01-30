@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+enum Currency {
+  INR('₹'),
+  USD('\$');
+
+  const Currency(this.symbol);
+  final String symbol;
+}
+
 class FilterScreen extends StatefulWidget {
   @override
   _FilterScreenState createState() => _FilterScreenState();
 }
 
 class _FilterScreenState extends State<FilterScreen> {
+
   late DateTime selectedDate;
+  String selectedCurrency = '\$';
+  int selectedChipIndex = 0; // Default currency
 
   @override
   void initState() {
@@ -38,7 +49,7 @@ class _FilterScreenState extends State<FilterScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(14.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -51,53 +62,95 @@ class _FilterScreenState extends State<FilterScreen> {
 
           // As On and Currency
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // As On
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('As On'),
-                  GestureDetector(
-                    onTap: () => _selectDate(context),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 8.0),
-                      decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: Colors.grey)),
-                      ),
-                      child: Text(
-                        _formattedDate(selectedDate),
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              // Currency
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Currency'),
-                  // Add your dropdown widget here
-                  // Example: DropdownWidget(),
-                ],
-              ),
-            ],
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    // As On
+    Expanded(
+      child: Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Text('As On'),
+    Transform.translate(
+      offset: Offset(0, -2.0), // Adjust the Y offset to bring them closer
+      child: GestureDetector(
+        onTap: () => _selectDate(context),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Color.fromARGB(255, 129,127,131))),
           ),
+          child: InputDecorator(
+            decoration: InputDecoration(
+              suffixIcon: Icon(
+                              Icons.event_note,
+                            ),
+              border: InputBorder.none,
+            ),
+            child: Text(
+              _formattedDate(selectedDate),
+              style: TextStyle(fontSize: 16.0),
+            ),
+          ),
+        ),
+      ),
+    ),
+  ],
+),
+    ),
 
-          SizedBox(height: 16.0),
+    // Spacer to create space between "As On" and "Currency"
+    SizedBox(width: 16.0),
+
+    // Currency
+    Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Text('Currency',),
+    Transform.translate(
+      offset: Offset(0, -9.0), // Adjust the Y offset to bring them closer
+      child: DropdownMenu<Currency>(
+        inputDecorationTheme: const InputDecorationTheme(
+          border: UnderlineInputBorder(borderSide: BorderSide(color: const Color.fromARGB(255, 162,157,165))),
+          floatingLabelAlignment: FloatingLabelAlignment.start,
+        ),
+        initialSelection: Currency.USD,
+        dropdownMenuEntries: [
+          for (final currency in Currency.values)
+            DropdownMenuEntry(label: currency.symbol, value: currency)
+        ],
+        onSelected: (value) {
+          if (value != null) {
+            setState(() {
+              selectedCurrency = value.symbol;
+            });
+          }
+        },
+        width: 110,
+      ),
+    ),
+  ],
+),
+  ],
+),
+
+          SizedBox(height: 30.0),
 
           // Third Filter Portfolio
-          Text('Third Filter Portfolio'),
+          Text('Portfolio'),
 
           // Chip List
           Wrap(
             spacing: 8.0,
             children: [
-              FilterChipWidget(label: 'A001 - Advisory Service'),
-              FilterChipWidget(label: 'A002 - General Investments'),
-              FilterChipWidget(label: 'A003 - Execution Only'),
+              for (int index = 0; index < filterChipLabels.length; index++)
+                FilterChipWidget(
+                  label: filterChipLabels[index],
+                  isSelected: index == selectedChipIndex,
+                  onSelected: () {
+                    setState(() {
+                      selectedChipIndex = index;
+                    });
+                  },
+                ),
             ],
           ),
         ],
@@ -107,28 +160,33 @@ class _FilterScreenState extends State<FilterScreen> {
 }
 
 
-class FilterChipWidget extends StatefulWidget {
+class FilterChipWidget extends StatelessWidget {
   final String label;
+  final bool isSelected;
+  final VoidCallback onSelected;
 
-  const FilterChipWidget({required this.label});
-
-  @override
-  _FilterChipWidgetState createState() => _FilterChipWidgetState();
-}
-
-class _FilterChipWidgetState extends State<FilterChipWidget> {
-  bool isSelected = false;
+  const FilterChipWidget({
+    required this.label,
+    required this.isSelected,
+    required this.onSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
     return FilterChip(
-      label: Text(widget.label),
+      label: Text(label),
       selected: isSelected,
       onSelected: (bool selected) {
-        setState(() {
-          isSelected = selected;
-        });
+        if (selected) {
+          onSelected();
+        }
       },
     );
   }
 }
+
+final List<String> filterChipLabels = [
+  'A001 - Advisory Service',
+  'A002 - General Investments',
+  'A003 - Execution Only',
+];

@@ -1,85 +1,134 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-showFilterBottomSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) {
-      return FractionallySizedBox(
-        heightFactor: 0.88,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                "Filters",
-                style: Theme.of(context).textTheme.displayMedium,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+class FilterScreen extends StatefulWidget {
+  @override
+  _FilterScreenState createState() => _FilterScreenState();
+}
+
+class _FilterScreenState extends State<FilterScreen> {
+  late DateTime selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    // Set the default date to today
+    selectedDate = DateTime.now();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
+  String _formattedDate(DateTime date) {
+    return DateFormat('MMMM d, y').format(date);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Title
+          Text(
+            'Filters',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 16.0),
+
+          // As On and Currency
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // As On
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('As On'),
+                  GestureDetector(
+                    onTap: () => _selectDate(context),
                     child: Container(
-                      // Replace with your DateTimeFormField widget
-                      // For simplicity, it's just a Container
-                      height: 50,
-                      color: Colors.grey[200],
+                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                      decoration: BoxDecoration(
+                        border: Border(bottom: BorderSide(color: Colors.grey)),
+                      ),
+                      child: Text(
+                        _formattedDate(selectedDate),
+                        style: TextStyle(fontSize: 16.0),
+                      ),
                     ),
                   ),
-                ),
-                DropdownMenu<Currency>(
-                  // Replace with your DropdownMenu widget
-                  // For simplicity, it's just a Container
-                  width: 110,
-                ),
-                const SizedBox(width: 16),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0, bottom: 5),
-              child: Text(
-                "Portfolio",
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                ],
               ),
-            ),
-            Expanded(
-              child: Container(
-                // Replace with your ChipList or CircularProgressIndicator widget
-                // For simplicity, it's just a Container
-                color: Colors.grey[200],
+
+              // Currency
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Currency'),
+                  // Add your dropdown widget here
+                  // Example: DropdownWidget(),
+                ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Remove functionalities
-                },
-                child: const Text("APPLY"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  textStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    },
-    showDragHandle: true,
-  );
+            ],
+          ),
+
+          SizedBox(height: 16.0),
+
+          // Third Filter Portfolio
+          Text('Third Filter Portfolio'),
+
+          // Chip List
+          Wrap(
+            spacing: 8.0,
+            children: [
+              FilterChipWidget(label: 'A001'),
+              FilterChipWidget(label: 'A002'),
+              FilterChipWidget(label: 'A003'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class FilterChipWidget extends StatefulWidget {
+  final String label;
+
+  const FilterChipWidget({required this.label});
+
+  @override
+  _FilterChipWidgetState createState() => _FilterChipWidgetState();
+}
+
+class _FilterChipWidgetState extends State<FilterChipWidget> {
+  bool isSelected = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilterChip(
+      label: Text(widget.label),
+      selected: isSelected,
+      onSelected: (bool selected) {
+        setState(() {
+          isSelected = selected;
+        });
+      },
+    );
+  }
 }

@@ -28,7 +28,11 @@ class MyHomePage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.filter_list),
             onPressed: () {
-              showFilterBottomSheet(context);
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return FilterScreen();
+                },);
             },
           ),
         ],

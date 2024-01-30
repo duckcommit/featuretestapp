@@ -95,9 +95,9 @@ class _FilterScreenState extends State<FilterScreen> {
           Wrap(
             spacing: 8.0,
             children: [
-              FilterChipWidget(label: 'A001'),
-              FilterChipWidget(label: 'A002'),
-              FilterChipWidget(label: 'A003'),
+              FilterChipWidget(label: 'A001 - Advisory Service'),
+              FilterChipWidget(label: 'A002 - General Investments'),
+              FilterChipWidget(label: 'A003 - Execution Only'),
             ],
           ),
         ],

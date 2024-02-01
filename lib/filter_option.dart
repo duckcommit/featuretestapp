@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 enum Currency {
-  INR('₹'),
-  USD('\$');
+  INR('Rupee'),
+  USD('Dollar');
 
   const Currency(this.symbol);
   final String symbol;
@@ -46,7 +46,7 @@ class FilterScreen extends StatefulWidget {
 
 class _FilterScreenState extends State<FilterScreen> {
   late DateTime selectedDate;
-  String selectedCurrency = '\$';
+  String selectedCurrency = 'Dollar';
   int selectedChipIndex = 0; // Default currency
 
   @override

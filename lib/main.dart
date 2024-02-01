@@ -23,18 +23,23 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Filter App'),
+        title: Text('Test'),
         actions: [
           IconButton(
             icon: Icon(Icons.filter_list),
             onPressed: () {
-              FilterScreen.showBottomSheet(context);
+              FilterScreen.showBottomSheet(
+                context,
+                showAsOn: true,
+                showCurrency: true,
+                showPortfolio: true,
+              );
             },
           ),
         ],
       ),
       body: Center(
-        child: Text('Main Screen Content'),
+        child: Text('Content Content Content'),
       ),
     );
   }

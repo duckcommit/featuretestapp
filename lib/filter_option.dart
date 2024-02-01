@@ -18,7 +18,7 @@ class FilterScreen extends StatefulWidget {
     return showModalBottomSheet(
       useSafeArea: true,
       isDismissible: true,
-      isScrollControlled: true,
+      isScrollControlled: false,
       showDragHandle: true,
       context: context,
       builder: (BuildContext context) {

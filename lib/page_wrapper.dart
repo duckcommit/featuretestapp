@@ -1,21 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:investment_app/shared/components/widget_filter/view/widget.filter.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:intl/intl.dart';
 
-class PageWrapper extends StatelessWidget {
+class PageWrapper extends StatelessWidget implements PreferredSizeWidget {
   final String pageTitle;
   final String portfolioName;
-  final String customerName;
-  final void Function(dynamic)? onFilterChanged;
-  final Map<String, dynamic> filterItems;
+  final DateTime currentDate;
+  final String currencyCode;
 
   PageWrapper({
-    super.key,
     required this.pageTitle,
     required this.portfolioName,
-    required this.customerName,
-    this.onFilterChanged,
-    required this.filterItems,
+    required this.currentDate,
+    required this.currencyCode,
   });
+
+  @override
+  Size get preferredSize => AppBar().preferredSize;
+
+  String formattedCustomerName() {
+    String formattedDate = DateFormat('d MMM y').format(currentDate);
+    return 'As on $formattedDate || $currencyCode';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,36 +31,29 @@ class PageWrapper extends StatelessWidget {
         children: [
           Text(
             pageTitle,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.background,
-                  fontWeight: FontWeight.w700,
-                ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
           Text(
             portfolioName,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
           ),
           Text(
-            customerName,
+            formattedCustomerName(),
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
           ),
         ],
       ),
       actions: [
         IconButton(
-          icon: Icon(Icons.filter_list),
+          icon: Icon(Ionicons.options_outline),
           onPressed: () {
-            // Handle filter button press
-            if (onFilterChanged != null) {
-              onFilterChanged!(/* Pass necessary parameters */);
-            }
+            // Handle filter icon press
           },
         ),
         IconButton(
-          icon: Icon(Icons.settings),
+          icon: Icon(Ionicons.menu_outline),
           onPressed: () {
-            // Handle settings button press
-            // Add your implementation here
+            Scaffold.of(context).openEndDrawer();
           },
         ),
       ],

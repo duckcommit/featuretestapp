@@ -74,7 +74,7 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
           keyboardType: TextInputType.number,
           maxLength: 4,
           onChanged: (value) {
-            // Handle OTP input
+            // Handle OTP input, refer from the prvs
           },
         ),
       ),
